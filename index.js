@@ -1,118 +1,143 @@
-import React, { useRef } from 'react'
-import { View, Text, FlatList, Dimensions, StyleSheet, Animated, ScrollView } from 'react-native'
+import React, { useRef } from "react"
+import {
+  View,
+  Dimensions,
+  StyleSheet,
+  Animated,
+  ScrollView,
+  Modal,
+} from "react-native"
 
-const { width, height } = Dimensions.get('screen')
+const { width, height } = Dimensions.get("screen")
 
 /**
- * Renders "carousel" to show cards. 
- * Data needs to have; "header, subheader, content"
+ * Renders "carousel"
  */
 
-export default function Karuselli({ data, cardColor, headerIcon, fontColor }) {
+export default function Karuselli({
+  section1,
+  section2,
+  section3,
+  colors,
+  visible,
+}) {
+  /* If colors were not given, use fault value 'white' */
+  if (!colors) {
+    colors = ["#fff", "#fff", "#fff"]
+  }
 
-  const scrollX = useRef(new Animated.Value(0)).current;
+  const scrollX = useRef(new Animated.Value(0)).current
 
-  const renderItem = ({ item, index }) => {
-    const inputRangeX = [(index - 1) * width, index * width, (index + 1) * width]
-    const slideXTitle = scrollX.interpolate({
-      inputRange: inputRangeX,
-      outputRange: [width * 0.3, 0, -width * 0.3]
-    })
-    const slideXDesc = scrollX.interpolate({
-      inputRange: inputRangeX,
-      outputRange: [width * 0.8, 0, -width * 0.8]
+  /* Animated background color */
+  const BackDrop = ({ scrollX }) => {
+    const bg = scrollX.interpolate({
+      inputRange: colors.map((_, i) => i * width),
+      outputRange: colors.map((bg) => bg),
     })
     return (
-      <View style={[styles.item]}>
-        <Animated.View style={[styles.card, { backgroundColor: cardColor }]}>
-          <Animated.View style={[styles.header, { transform: [{ translateX: slideXTitle }] }]}>
-            <View style={{ paddingLeft: width * .05 }}>
-              {
-                headerIcon &&
-                headerIcon
-              }
-            </View>
-            <Animated.Text style={[styles.headerText, { color: fontColor }]}>{item.header}</Animated.Text>
-          </Animated.View>
-          <View style={styles.content}>
-            <Animated.View style={[styles.contentWrapper, { transform: [{ translateX: slideXDesc }] }]}>
-              <ScrollView>
-                <Text style={[styles.subheaderText, { color: fontColor }]}>{item.subheader}</Text>
-                <Text style={{ color: fontColor }}>{item.content}</Text>
-              </ScrollView>
-            </Animated.View>
-          </View>
-        </Animated.View>
+      <Animated.View
+        style={[
+          StyleSheet.absoluteFillObject,
+          { backgroundColor: bg, zIndex: -1 },
+        ]}
+      />
+    )
+  }
+
+  /* Dot pagination showed at the bottom */
+  const Pagination = ({ scrollX }) => {
+    const slide = scrollX.interpolate({
+      inputRange: [0, 800, 1000],
+      outputRange: [-width * 0.004, width * 0.352, 200],
+    })
+    return (
+      <View style={styles.pagination}>
+        <Animated.View
+          style={[
+            styles.dot,
+            {
+              position: "absolute",
+              height: 18,
+              width: 18,
+              backgroundColor: "#fff",
+              transform: [{ translateX: slide }],
+            },
+          ]}
+        />
+        <View style={styles.dot} />
+        <View style={styles.dot} />
+        <View style={styles.dot} />
       </View>
     )
   }
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        horizontal
-        snapToAlignment={"start"}
-        snapToInterval={width}
-        showsHorizontalScrollIndicator={false}
-        data={data}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: false }
-        )}
-      />
+    <View style={{ flex: 1 }}>
+      <Modal animationType="slide" visible={!visible ? visible : true}>
+        <BackDrop scrollX={scrollX} />
+        <ScrollView
+          horizontal
+          style={styles.container}
+          snapToAlignment={"start"}
+          decelerationRate={"fast"}
+          snapToInterval={width}
+          showsHorizontalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            { useNativeDriver: false }
+          )}
+          scrollEventThrottle={16}
+        >
+          <Animated.View style={styles.item}>
+            <View style={styles.itemWrapper}>{section1}</View>
+          </Animated.View>
+          <Animated.View style={styles.item}>
+            <View style={styles.itemWrapper}>{section2}</View>
+          </Animated.View>
+          <Animated.View style={styles.item}>
+            <View style={styles.itemWrapper}>{section3}</View>
+          </Animated.View>
+        </ScrollView>
+        <Pagination scrollX={scrollX} />
+      </Modal>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: width,
-    height: height * .5
+    flex: 1,
   },
   item: {
     width: width,
-    height: height * .5,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    height: height,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  card: {
-    width: '90%',
-    height: '70%',
-    display: 'flex',
+  itemWrapper: {
+    width: width * 0.85,
+    height: height * 0.8,
+  },
+  pagination: {
+    width: width * 0.5,
+    height: height * 0.03,
+    position: "absolute",
+    bottom: height * 0.05,
+    left: width * 0.25,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+  },
+  dot: {
+    backgroundColor: "#0b0b0b",
     borderRadius: 26,
+    width: 15,
+    height: 15,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 12,
-    },
-    shadowOpacity: 0.58,
-    shadowRadius: 16.00,
-    elevation: 24,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
-  header: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  content: {
-    flex: 3,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  headerText: {
-    fontSize: width * .08,
-    paddingLeft: width * .05
-  },
-  subheaderText: {
-    fontSize: width * .05,
-    marginBottom: height * .01
-  },
-  contentWrapper: {
-    height: '90%',
-    width: '90%',
-  }
-});
+})

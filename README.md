@@ -3,30 +3,87 @@
 ## Installation
 
 > npm install rn-karuselli
+
 ---
+
 > yarn add rn-karuselli
 
 ## Usage
 
-### **Karuselli's width is 100% and 50% of you current screen size**
+Karuselli works as horizontal ScrollView. You can use it as it is or as modal
 
-```
+**All three sections must be added**
+
+```js
 <Karuselli
-  data={DATA}
-  cardColor='white'
-  fontColor='black'
-  headerIcon={<AntDesign name="downcircle" size={27} color="black" />}
+  section1={<Landing />}
+  section2={<Info />}
+  section3={<Next />}
+  colors={colors}
+  handleModalClose={handleModalClose}
 />
+```
+
+**As modal**:
+
+```js
+function App() {
+  const [visible, setVisible] = useState(true)
+  const handleModalClose = () => {
+    setVisible(!visible)
+  }
+
+  const Landing = () => {
+    return (
+      <View>
+        <Text>Landing</Text>
+      </View>
+    )
+  }
+
+  const Info = () => {
+    return (
+      <View>
+        <Text>Info</Text>
+      </View>
+    )
+  }
+
+  const Next = () => {
+    return (
+      <View>
+        <Text>Landing</Text>
+        <TouchableHighlight onPress={() => handleModalClose()}>
+          <Text>Close modal</Text>
+        </TouchableHighlight>
+      </View>
+    )
+  }
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Karuselli
+        section1={<Landing />}
+        section2={<Info />}
+        section3={<Next />}
+        colors={colors}
+        visble={visible}
+        handleModalClose={handleModalClose}
+      />
+    </View>
+  )
+}
 ```
 
 ## Properties
 
-| Prop | Type | Description
-| ----------- | ----------- | ----------- |
-| data | array | Data needs to be in this format: *{ id: integer, header: 'string', subheader: 'string', content: 'string}*
-| cardColor | string | Background color of the card
-| fontColor | string | Sets the color for text
-| headerIcon | component | Custom component, example: `<Ionicons name="md-checkmark-circle" size={26} color="green" />`
+| Prop     | Type      | Description                                                                                                                                                                                           |
+| -------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| section1 | component | Custom component                                                                                                                                                                                      |
+| section2 | component | Custom component                                                                                                                                                                                      |
+| section3 | component | Custom component                                                                                                                                                                                      |
+| colors   | array     | List of colors, that works as backgroundcolors. Each page has its own backgroundcolor, that will interpolate to the next pages backgroundcolor. **example: const colors = ['red', 'blue', 'yellow']** |
+| visible  | boolean   | You can use Karuselli as Modal, pass the state of the modals visibility as props                                                                                                                      |
 
 ## Contact
 
