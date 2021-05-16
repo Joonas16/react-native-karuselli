@@ -1,10 +1,12 @@
 # **React native karuselli**
 
+![gif](https://media.giphy.com/media/lqC6HcQ1IoYhxhSMvX/giphy.gif)
+
+### Swipeable component with paging.
+
 ## Installation
 
 > npm install rn-karuselli
-
----
 
 > yarn add rn-karuselli
 
@@ -12,7 +14,7 @@
 
 Karuselli works as horizontal ScrollView. You can use it as it is or as modal
 
-**All three sections must be added**
+**All three sections must be provided**
 
 ```js
 <Karuselli

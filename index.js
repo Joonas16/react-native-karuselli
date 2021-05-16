@@ -47,8 +47,8 @@ export default function Karuselli({
   /* Dot pagination showed at the bottom */
   const Pagination = ({ scrollX }) => {
     const slide = scrollX.interpolate({
-      inputRange: [0, 800, 1000],
-      outputRange: [-width * 0.004, width * 0.352, 200],
+      inputRange: [0, width],
+      outputRange: [-width * 0.006, width * 0.124],
     })
     return (
       <View style={styles.pagination}>
@@ -57,8 +57,8 @@ export default function Karuselli({
             styles.dot,
             {
               position: "absolute",
-              height: 18,
-              width: 18,
+              height: 20,
+              width: 20,
               backgroundColor: "#fff",
               transform: [{ translateX: slide }],
             },
@@ -70,7 +70,10 @@ export default function Karuselli({
       </View>
     )
   }
-
+  if (!section1 || !section2 || !section3) {
+    var err = new Error("All three sections must be provided to 'Karuselli'")
+    throw err
+  }
   return (
     <View style={{ flex: 1 }}>
       <Modal animationType="slide" visible={!visible ? visible : true}>
@@ -119,14 +122,14 @@ const styles = StyleSheet.create({
     height: height * 0.8,
   },
   pagination: {
-    width: width * 0.5,
+    width: width * 0.3,
     height: height * 0.03,
     position: "absolute",
     bottom: height * 0.05,
-    left: width * 0.25,
+    left: width * 0.35,
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   dot: {
