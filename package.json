@@ -1,6 +1,6 @@
 {
   "name": "rn-karuselli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "React Native karuselli",
   "main": "index.js",
   "scripts": {
