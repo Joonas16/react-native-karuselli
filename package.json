@@ -1,6 +1,6 @@
 {
   "name": "rn-karuselli",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "React Native karuselli",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "url": "git+https://github.com/Joonas16/react-native-karuselli.git"
   },
   "author": "Joonas Aaltonen <joonas.aaltonen16@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Joonas16/react-native-karuselli/issues"
   },
