@@ -1,11 +1,11 @@
-import React, { useRef } from "react"
+import React, { useRef, useState, useCallback } from "react"
 import {
   View,
   Dimensions,
   StyleSheet,
   Animated,
-  ScrollView,
   Modal,
+  FlatList,
 } from "react-native"
 
 const { width, height } = Dimensions.get("screen")
@@ -14,18 +14,11 @@ const { width, height } = Dimensions.get("screen")
  * Renders "carousel"
  */
 
-export default function Karuselli({
-  section1,
-  section2,
-  section3,
-  colors,
-  visible,
-}) {
+export default function Karuselli({ colors, visible, views, dotColor }) {
   /* If colors were not given, use fault value 'white' */
   if (!colors) {
-    colors = ["#fff", "#fff", "#fff"]
+    colors = ["#fff", "#fff"]
   }
-
   const scrollX = useRef(new Animated.Value(0)).current
 
   /* Animated background color */
@@ -45,44 +38,76 @@ export default function Karuselli({
   }
 
   /* Dot pagination showed at the bottom */
-  const Pagination = ({ scrollX }) => {
-    const slide = scrollX.interpolate({
-      inputRange: [0, width],
-      outputRange: [-width * 0.006, width * 0.124],
+  const Pagination = ({ scrollX, index }) => {
+    const scale = scrollX.interpolate({
+      inputRange: [(index - 1) * width, index * width, (index + 1) * width],
+      outputRange: [0.5, 1.4, 0.5],
     })
     return (
-      <View style={styles.pagination}>
-        <Animated.View
-          style={[
-            styles.dot,
-            {
-              position: "absolute",
-              height: 20,
-              width: 20,
-              backgroundColor: "#fff",
-              transform: [{ translateX: slide }],
-            },
-          ]}
-        />
-        <View style={styles.dot} />
-        <View style={styles.dot} />
-        <View style={styles.dot} />
+      <View
+        style={[
+          styles.pagination,
+          {
+            width: width * 0.06 * views.length,
+            left: width * 0.5 - (width * 0.06 * views.length) / 2,
+          },
+        ]}
+      >
+        {views.map((item, i) => {
+          return (
+            <Animated.View
+              key={item.key}
+              style={[
+                styles.dot,
+                {
+                  transform: [{ scale: i === index ? scale : 1 }],
+                  opacity: i === index ? 1 : 0.6,
+                  backgroundColor: dotColor,
+                },
+              ]}
+            />
+          )
+        })}
       </View>
     )
   }
-  if (!section1 || !section2 || !section3) {
-    var err = new Error("All three sections must be provided to 'Karuselli'")
-    throw err
+
+  const renderItem = ({ item }) => {
+    return (
+      <Animated.View style={styles.item}>
+        <View style={styles.itemWrapper}>{item}</View>
+      </Animated.View>
+    )
   }
+
+  // INDEX HANDLING STARTS
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
+    setCurrentIndex(viewableItems[0].index)
+  }, [])
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 50,
+  }
+  // INDEX HANDLING ENDS
+
+  if (!views) {
+    console.log("Add views to 'Karuselli'")
+    return <View style={{ flex: 1 }} />
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <Modal animationType="slide" visible={!visible ? visible : true}>
         <BackDrop scrollX={scrollX} />
-        <ScrollView
+        <FlatList
           horizontal
           style={styles.container}
           snapToAlignment={"start"}
           decelerationRate={"fast"}
+          onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
+          data={views}
+          renderItem={renderItem}
           snapToInterval={width}
           showsHorizontalScrollIndicator={false}
           onScroll={Animated.event(
@@ -90,18 +115,8 @@ export default function Karuselli({
             { useNativeDriver: false }
           )}
           scrollEventThrottle={16}
-        >
-          <Animated.View style={styles.item}>
-            <View style={styles.itemWrapper}>{section1}</View>
-          </Animated.View>
-          <Animated.View style={styles.item}>
-            <View style={styles.itemWrapper}>{section2}</View>
-          </Animated.View>
-          <Animated.View style={styles.item}>
-            <View style={styles.itemWrapper}>{section3}</View>
-          </Animated.View>
-        </ScrollView>
-        <Pagination scrollX={scrollX} />
+        />
+        <Pagination scrollX={scrollX} index={currentIndex} />
       </Modal>
     </View>
   )
@@ -122,11 +137,9 @@ const styles = StyleSheet.create({
     height: height * 0.8,
   },
   pagination: {
-    width: width * 0.3,
     height: height * 0.03,
     position: "absolute",
     bottom: height * 0.05,
-    left: width * 0.35,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
@@ -137,6 +150,18 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     width: 15,
     height: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  biggerDot: {
+    position: "absolute",
+    height: 20,
+    width: 20,
+    borderRadius: 26,
+    backgroundColor: "#fff",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.8,

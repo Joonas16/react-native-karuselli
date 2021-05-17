@@ -1,6 +1,6 @@
 # **React native karuselli**
 
-![gif](https://media.giphy.com/media/lqC6HcQ1IoYhxhSMvX/giphy.gif)
+![gif](https://media.giphy.com/media/6QlOhEMYqfxHBiLDDr/giphy.gif)
 
 ### Swipeable component with paging.
 
@@ -12,17 +12,15 @@
 
 ## Usage
 
-Karuselli works as horizontal ScrollView. You can use it as it is or as modal
+Karuselli works as horizontal FlatList. You can use it as it is or as modal
 
-**All three sections must be provided**
+_Add a "key" props for each view_
 
 ```js
 <Karuselli
-  section1={<Landing />}
-  section2={<Info />}
-  section3={<Next />}
+  views={[<Landing key={0} />, <SignIn key={1} />, <Next key={2} />]}
   colors={colors}
-  handleModalClose={handleModalClose}
+  dotColor={"#d3d3d3"}
 />
 ```
 
@@ -54,7 +52,7 @@ function App() {
   const Next = () => {
     return (
       <View>
-        <Text>Landing</Text>
+        <Text>Next</Text>
         <TouchableHighlight onPress={() => handleModalClose()}>
           <Text>Close modal</Text>
         </TouchableHighlight>
@@ -65,11 +63,10 @@ function App() {
   return (
     <View style={{ flex: 1 }}>
       <Karuselli
-        section1={<Landing />}
-        section2={<Info />}
-        section3={<Next />}
-        colors={colors}
-        visble={visible}
+        views={[<Landing key={0} />, <SignIn key={1} />, <Next key={2} />]}
+        dotColor={"#c51c51"}
+        colors={["red", "white", "gold"]}
+        visible={visible}
         handleModalClose={handleModalClose}
       />
     </View>
@@ -79,13 +76,12 @@ function App() {
 
 ## Properties
 
-| Prop     | Type      | Description                                                                                                                                                                                           |
-| -------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| section1 | component | Custom component                                                                                                                                                                                      |
-| section2 | component | Custom component                                                                                                                                                                                      |
-| section3 | component | Custom component                                                                                                                                                                                      |
-| colors   | array     | List of colors, that works as backgroundcolors. Each page has its own backgroundcolor, that will interpolate to the next pages backgroundcolor. **example: const colors = ['red', 'blue', 'yellow']** |
-| visible  | boolean   | You can use Karuselli as Modal, pass the state of the modals visibility as props                                                                                                                      |
+| Prop     | Type    | Description                                                                                                                                                                                           |
+| -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| views    | array   | Add an array of views                                                                                                                                                                                 |
+| colors   | array   | List of colors, that works as backgroundcolors. Each page has its own backgroundcolor, that will interpolate to the next pages backgroundcolor. **example: const colors = ['red', 'blue', 'yellow']** |
+| visible  | boolean | You can use Karuselli as Modal, pass the state of the modals visibility as props                                                                                                                      |
+| dotColor | string  | Dot color for the pagination, default is '#000000'                                                                                                                                                    |
 
 ## Contact
 
