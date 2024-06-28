@@ -82,7 +82,3 @@ function App() {
 | colors   | array   | List of colors, that works as backgroundcolors. Each page has its own backgroundcolor, that will interpolate to the next pages backgroundcolor. **example: const colors = ['red', 'blue', 'yellow']** |
 | visible  | boolean | You can use Karuselli as Modal, pass the state of the modals visibility as props                                                                                                                      |
 | dotColor | string  | Dot color for the pagination, default is '#000000'                                                                                                                                                    |
-
-## Contact
-
-Email: joonas.aaltonen16@gmail.com
