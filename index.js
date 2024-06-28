@@ -15,7 +15,7 @@ const { width, height } = Dimensions.get("screen")
  */
 
 export default function Karuselli({ colors, visible, views, dotColor }) {
-  /* If colors were not given, use fault value 'white' */
+  /* If colors were not given, use default value 'white' */
   if (!colors) {
     colors = ["#fff", "#fff"]
   }
